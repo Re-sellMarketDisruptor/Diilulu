@@ -17,7 +17,7 @@
             color: #5d3a5d;
         }
 
-        /* --- TOAST NOTIFICATION (Centered & Longer) --- */
+        /* --- TOAST NOTIFICATION (Centered & Middle Timing) --- */
         #toast {
             visibility: hidden;
             min-width: 260px;
@@ -26,7 +26,6 @@
             text-align: center;
             border-radius: 20px;
             padding: 20px;
-            /* CENTERED POSITIONING */
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -94,7 +93,7 @@
         }
         .product-card:active { transform: scale(0.98); }
         
-        /* --- LIKE METER ON CARD (New) --- */
+        /* --- LIKE METER ON CARD --- */
         .card-like-badge {
             position: absolute; top: 8px; right: 8px; z-index: 5;
             display: flex; align-items: center; gap: 4px;
@@ -110,7 +109,6 @@
             filter: grayscale(100%) opacity(0.5);
             transition: transform 0.2s;
         }
-        /* NO ROTATION - Just Scale Pop */
         .card-heart.active { filter: grayscale(0%) opacity(1); transform: scale(1.2); }
         
         .card-like-count { font-size: 12px; font-weight: bold; color: #d81b60; font-family: 'Courier New', monospace; }
@@ -175,7 +173,6 @@
             filter: grayscale(100%) opacity(0.6) drop-shadow(0 5px 5px rgba(0,0,0,0.1)); 
             transition: all 0.3s; cursor: pointer; z-index: 20;
         }
-        /* No Rotation on active */
         .floating-heart-main.active { filter: grayscale(0%) opacity(1); transform: scale(1.1); }
 
         .detail-section { padding: 25px; margin: 15px; background: rgba(255,255,255,0.6); border-radius: 20px; border: 2px solid #fff; }
@@ -246,7 +243,7 @@
 
         <nav class="bottom-nav">
             <a href="#" class="nav-btn"><i class="fas fa-th-large"></i>More</a>
-            <a href="#" class="nav-btn active"><i class="fas fa-shopping-bag"></i>My Tote Bag</a>
+            <a href="#" class="nav-btn active"><i class="fas fa-shopping-bag"></i>Orders</a>
             <a href="#" class="nav-btn"><i class="fas fa-user-circle"></i>Profile</a>
         </nav>
     </div>
@@ -254,7 +251,7 @@
     <div id="product-page">
         <div class="app-header">
             <a href="#" onclick="closeProduct()" class="icon-btn"><i class="fas fa-arrow-left"></i></a>
-            <a href="#" onclick="shareProduct()" class="icon-btn"><i class="fas fa-link"></i></a>
+            <a href="#" onclick="shareProduct(event)" class="icon-btn"><i class="fas fa-link"></i></a>
         </div>
         <div class="image-container">
             <div class="carousel" id="detail-images"></div>
@@ -302,12 +299,15 @@
         }
 
         // --- SHARE + TOAST ---
-        function shareProduct() {
+        function shareProduct(event) {
+            // STOP THE PAGE JUMP!
+            if(event) event.preventDefault();
+            
             navigator.clipboard.writeText(window.location.href).then(() => {
                 const toast = document.getElementById("toast");
                 toast.className = "show";
-                // 5 SECONDS DURATION
-                setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 5000);
+                // 3.5 SECONDS DURATION
+                setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3500);
             }).catch(err => {
                 alert("Could not copy link :(");
             });
@@ -380,7 +380,7 @@
             products.forEach(p => {
                 const isLiked = localStorage.getItem('liked_item_' + p.id);
                 const activeClass = isLiked ? 'active' : '';
-                // Simluated Count
+                // Simulated Count
                 const fakeCount = Math.floor(p.id * 123 % 50) + 10 + (isLiked ? 1 : 0);
 
                 html += `
@@ -480,4 +480,3 @@
     </script>
 </body>
 </html>
-
