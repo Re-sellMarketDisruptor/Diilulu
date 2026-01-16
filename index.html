@@ -309,5 +309,65 @@
 
     </nav>
 
+<script>
+    // --- YOUR INVENTORY LIST ---
+    // This is the ONLY place you need to edit to add new items.
+    const products = [
+        {
+            id: 1,
+            name: "Von Dutch Baby Tee",
+            price: 25.00,
+            image: "https://via.placeholder.com/300x400/ffb7b2/000000?text=Baby+Tee",
+            tag: "Y2K"
+        },
+        {
+            id: 2,
+            name: "Juicy Couture Skirt",
+            price: 45.00,
+            image: "https://via.placeholder.com/300x400/ffdac1/000000?text=Mini+Skirt",
+            tag: "Vintage"
+        },
+        {
+            id: 3,
+            name: "Coach Baguette Bag",
+            price: 80.00,
+            image: "https://via.placeholder.com/300x400/e2f0cb/000000?text=Baguette+Bag",
+            tag: "Accessories"
+        },
+        // To add a new item, just copy one of the blocks above and paste it here!
+    ];
+
+    // --- THE ENGINE (Do not touch unless you want to change the layout) ---
+    const container = document.getElementById('shop-container');
+
+    function renderProducts() {
+        let html = '';
+        products.forEach(product => {
+            html += `
+                <div class="product-card">
+                    <img src="${product.image}" class="product-image" alt="${product.name}">
+                    <div class="product-info">
+                        <div class="brand">${product.tag}</div> <div class="product-title" style="font-weight:bold; font-size:13px; margin-bottom:5px;">${product.name}</div>
+                        <div class="price">$${product.price.toFixed(2)}</div>
+                        <button class="buy-btn snipcart-add-item" 
+                            data-item-id="${product.id}" 
+                            data-item-price="${product.price}" 
+                            data-item-name="${product.name}" 
+                            data-item-image="${product.image}">
+                            Add
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    // Run the engine
+    renderProducts();
+</script>
+
+
 </body>
+
 </html>
