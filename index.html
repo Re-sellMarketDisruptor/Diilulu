@@ -17,7 +17,34 @@
             color: #5d3a5d;
         }
 
-        /* --- TOP BAR (Search) --- */
+        /* --- TOAST NOTIFICATION (The "Copied" Popup) --- */
+        #toast {
+            visibility: hidden; /* Hidden by default */
+            min-width: 250px;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #d81b60;
+            text-align: center;
+            border-radius: 50px;
+            padding: 15px;
+            position: fixed;
+            z-index: 2000; /* On top of everything */
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 15px rgba(216, 27, 96, 0.3);
+            font-weight: bold;
+            border: 2px solid #ffb7c5;
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px; /* Slight float up animation */
+        }
+
+        /* --- TOP BAR --- */
         .top-bar {
             position: sticky; top: 0; 
             background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
@@ -31,19 +58,17 @@
         }
         .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #ff69b4; }
 
-        /* --- CATEGORY & SORT BAR (New!) --- */
+        /* --- CATEGORY & SORT BAR --- */
         .filter-bar {
-            position: sticky; top: 68px; /* sits right below top-bar */
+            position: sticky; top: 68px;
             background: rgba(255,255,255,0.9); backdrop-filter: blur(5px);
             padding: 10px 15px; border-bottom: 2px solid #ffb7c5;
             display: flex; gap: 10px; align-items: center; z-index: 90;
             overflow-x: auto; white-space: nowrap;
-            /* Hide scrollbar but keep functionality */
             -ms-overflow-style: none; scrollbar-width: none;
         }
         .filter-bar::-webkit-scrollbar { display: none; }
 
-        /* The Pills */
         .cat-btn {
             padding: 6px 15px; border-radius: 20px;
             border: 1px solid #ff69b4; background: #fff;
@@ -52,7 +77,6 @@
         }
         .cat-btn.active { background: #ff69b4; color: #fff; }
 
-        /* The Sort Dropdown */
         .sort-wrapper { position: relative; margin-left: auto; border-left: 2px solid #ffd1dc; padding-left: 10px; }
         .sort-select {
             appearance: none; border: none; background: transparent;
@@ -129,6 +153,7 @@
             color: #ff1493; border-radius: 50%; width: 45px; height: 45px; 
             display: flex; align-items: center; justify-content: center;
             backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(255,105,180,0.2);
+            text-decoration: none; /* fixes underline on icons */
         }
 
         .image-container { position: relative; width: 100%; height: 420px; background: #fff0f5; border-bottom: 3px solid #fff; }
@@ -175,6 +200,8 @@
 </head>
 <body>
 
+    <div id="toast">Copied to clipboard! ❤️</div>
+
     <div id="main-view">
         <nav class="top-bar">
             <div style="position:relative; flex-grow:1;">
@@ -215,7 +242,7 @@
     <div id="product-page">
         <div class="app-header">
             <a href="#" onclick="closeProduct()" class="icon-btn"><i class="fas fa-arrow-left"></i></a>
-            <a href="#" onclick="shareProduct()" class="icon-btn"><i class="fas fa-share-alt"></i></a>
+            <a href="#" onclick="shareProduct()" class="icon-btn"><i class="fas fa-link"></i></a>
         </div>
         <div class="image-container">
             <div class="carousel" id="detail-images"></div>
@@ -257,15 +284,28 @@
                 const response = await fetch(sheetUrl);
                 const data = await response.text();
                 allProducts = csvToJson(data);
-                applyFilters(); // Initial Render
+                applyFilters(); 
                 checkHash();
             } catch (error) { console.error(error); }
         }
 
-        // --- FILTERING & SORTING LOGIC ---
+        // --- NEW SHARE FUNCTIONALITY ---
+        function shareProduct() {
+            // 1. Copy URL to clipboard
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                // 2. Show the "Toast" popup
+                const toast = document.getElementById("toast");
+                toast.className = "show";
+                // 3. Hide it after 3 seconds
+                setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+            }).catch(err => {
+                alert("Could not copy link :(");
+            });
+        }
+
+        // --- FILTERING & SORTING ---
         function filterCategory(cat, btn) {
             currentCategory = cat;
-            // Update buttons visual state
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             applyFilters();
@@ -277,29 +317,23 @@
         }
 
         function handleSearch() {
-            applyFilters(); // Re-runs filter including search box text
+            applyFilters(); 
         }
 
         function applyFilters() {
             let filtered = [...allProducts];
-
-            // 1. Search Filter
             const query = document.getElementById('search-box').value.toLowerCase();
             if(query) {
                 filtered = filtered.filter(p => p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query));
             }
-
-            // 2. Category Filter
             if(currentCategory !== 'All') {
                 filtered = filtered.filter(p => 
                     p.category.toLowerCase().includes(currentCategory.toLowerCase()) || 
                     p.name.toLowerCase().includes(currentCategory.toLowerCase())
                 );
             }
-
-            // 3. Sort Logic
             if(currentSort === 'newest') {
-                filtered.sort((a, b) => b.id - a.id); // Higher ID = Newer
+                filtered.sort((a, b) => b.id - a.id);
             } else if (currentSort === 'oldest') {
                 filtered.sort((a, b) => a.id - b.id);
             } else if (currentSort === 'price-low') {
@@ -307,11 +341,10 @@
             } else if (currentSort === 'price-high') {
                 filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
             }
-
             renderGrid(filtered);
         }
 
-        // --- STANDARD FUNCTIONS ---
+        // --- DATA & RENDERING ---
         function csvToJson(csv) {
             const lines = csv.split('\n');
             const result = [];
@@ -338,7 +371,7 @@
                     moreImages: row[6] ? row[6].split(';').map(cleanImage) : [] 
                 });
             }
-            return result.reverse(); // Default to newest first
+            return result.reverse();
         }
 
         function renderGrid(products) {
@@ -390,6 +423,7 @@
             window.location.hash = '';
             mainView.style.display = 'block';
             productPage.style.display = 'none';
+            // Re-render to ensure hearts are synced if liked from detail page
             renderGrid(allProducts.filter(p => currentCategory === 'All' || p.category.includes(currentCategory))); 
         }
 
