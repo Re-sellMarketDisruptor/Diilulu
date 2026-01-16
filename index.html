@@ -17,31 +17,31 @@
             color: #5d3a5d;
         }
 
-        /* --- TOAST NOTIFICATION (The "Copied" Popup) --- */
+        /* --- TOAST NOTIFICATION (Centered & Longer) --- */
         #toast {
-            visibility: hidden; /* Hidden by default */
-            min-width: 250px;
-            background-color: rgba(255, 255, 255, 0.95);
+            visibility: hidden;
+            min-width: 260px;
+            background-color: rgba(255, 255, 255, 0.98);
             color: #d81b60;
             text-align: center;
-            border-radius: 50px;
-            padding: 15px;
+            border-radius: 20px;
+            padding: 20px;
+            /* CENTERED POSITIONING */
             position: fixed;
-            z-index: 2000; /* On top of everything */
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            box-shadow: 0 5px 15px rgba(216, 27, 96, 0.3);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.4);
             font-weight: bold;
-            border: 2px solid #ffb7c5;
+            font-size: 16px;
+            border: 3px solid #ffb7c5;
             opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
+            transition: opacity 0.3s;
         }
 
         #toast.show {
             visibility: visible;
             opacity: 1;
-            bottom: 50px; /* Slight float up animation */
         }
 
         /* --- TOP BAR --- */
@@ -64,8 +64,7 @@
             background: rgba(255,255,255,0.9); backdrop-filter: blur(5px);
             padding: 10px 15px; border-bottom: 2px solid #ffb7c5;
             display: flex; gap: 10px; align-items: center; z-index: 90;
-            overflow-x: auto; white-space: nowrap;
-            -ms-overflow-style: none; scrollbar-width: none;
+            overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none;
         }
         .filter-bar::-webkit-scrollbar { display: none; }
 
@@ -80,8 +79,7 @@
         .sort-wrapper { position: relative; margin-left: auto; border-left: 2px solid #ffd1dc; padding-left: 10px; }
         .sort-select {
             appearance: none; border: none; background: transparent;
-            font-weight: bold; color: #d81b60; font-size: 13px; cursor: pointer;
-            padding-right: 15px;
+            font-weight: bold; color: #d81b60; font-size: 13px; cursor: pointer; padding-right: 15px;
         }
         .sort-icon { position: absolute; right: 0; top: 2px; color: #d81b60; pointer-events: none; font-size: 10px; }
 
@@ -89,23 +87,33 @@
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
         
         .product-card {
-            position: relative;
-            border-radius: 18px; overflow: hidden;
-            background: rgba(255,255,255,0.8);
-            border: 2px solid #fff;
+            position: relative; border-radius: 18px; overflow: hidden;
+            background: rgba(255,255,255,0.8); border: 2px solid #fff;
             box-shadow: 0 4px 10px rgba(255, 182, 193, 0.4);
             transition: transform 0.2s; cursor: pointer;
         }
         .product-card:active { transform: scale(0.98); }
         
-        .card-heart {
+        /* --- LIKE METER ON CARD (New) --- */
+        .card-like-badge {
             position: absolute; top: 8px; right: 8px; z-index: 5;
-            width: 25px; height: 25px;
+            display: flex; align-items: center; gap: 4px;
+            background: rgba(255,255,255,0.85); padding: 5px 8px; border-radius: 15px;
+            backdrop-filter: blur(4px); border: 1px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        
+        .card-heart {
+            width: 18px; height: 18px;
             background-size: contain; background-repeat: no-repeat; background-position: center;
             filter: grayscale(100%) opacity(0.5);
             transition: transform 0.2s;
         }
+        /* NO ROTATION - Just Scale Pop */
         .card-heart.active { filter: grayscale(0%) opacity(1); transform: scale(1.2); }
+        
+        .card-like-count { font-size: 12px; font-weight: bold; color: #d81b60; font-family: 'Courier New', monospace; }
 
         .product-image { 
             width: 100%; height: 180px; object-fit: cover; 
@@ -153,7 +161,7 @@
             color: #ff1493; border-radius: 50%; width: 45px; height: 45px; 
             display: flex; align-items: center; justify-content: center;
             backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(255,105,180,0.2);
-            text-decoration: none; /* fixes underline on icons */
+            text-decoration: none;
         }
 
         .image-container { position: relative; width: 100%; height: 420px; background: #fff0f5; border-bottom: 3px solid #fff; }
@@ -167,7 +175,8 @@
             filter: grayscale(100%) opacity(0.6) drop-shadow(0 5px 5px rgba(0,0,0,0.1)); 
             transition: all 0.3s; cursor: pointer; z-index: 20;
         }
-        .floating-heart-main.active { filter: grayscale(0%) opacity(1); transform: scale(1.1) rotate(10deg); }
+        /* No Rotation on active */
+        .floating-heart-main.active { filter: grayscale(0%) opacity(1); transform: scale(1.1); }
 
         .detail-section { padding: 25px; margin: 15px; background: rgba(255,255,255,0.6); border-radius: 20px; border: 2px solid #fff; }
         .title-row { display: flex; justify-content: space-between; align-items: start; }
@@ -200,7 +209,10 @@
 </head>
 <body>
 
-    <div id="toast">Copied to clipboard! ❤️</div>
+    <div id="toast">
+        <i class="fas fa-check-circle"></i><br>
+        Copied to clipboard! ❤️
+    </div>
 
     <div id="main-view">
         <nav class="top-bar">
@@ -289,21 +301,19 @@
             } catch (error) { console.error(error); }
         }
 
-        // --- NEW SHARE FUNCTIONALITY ---
+        // --- SHARE + TOAST ---
         function shareProduct() {
-            // 1. Copy URL to clipboard
             navigator.clipboard.writeText(window.location.href).then(() => {
-                // 2. Show the "Toast" popup
                 const toast = document.getElementById("toast");
                 toast.className = "show";
-                // 3. Hide it after 3 seconds
-                setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+                // 5 SECONDS DURATION
+                setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 5000);
             }).catch(err => {
                 alert("Could not copy link :(");
             });
         }
 
-        // --- FILTERING & SORTING ---
+        // --- FILTERING ---
         function filterCategory(cat, btn) {
             currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
@@ -311,14 +321,8 @@
             applyFilters();
         }
 
-        function handleSort(sortValue) {
-            currentSort = sortValue;
-            applyFilters();
-        }
-
-        function handleSearch() {
-            applyFilters(); 
-        }
+        function handleSort(sortValue) { currentSort = sortValue; applyFilters(); }
+        function handleSearch() { applyFilters(); }
 
         function applyFilters() {
             let filtered = [...allProducts];
@@ -327,24 +331,17 @@
                 filtered = filtered.filter(p => p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query));
             }
             if(currentCategory !== 'All') {
-                filtered = filtered.filter(p => 
-                    p.category.toLowerCase().includes(currentCategory.toLowerCase()) || 
-                    p.name.toLowerCase().includes(currentCategory.toLowerCase())
-                );
+                filtered = filtered.filter(p => p.category.toLowerCase().includes(currentCategory.toLowerCase()) || p.name.toLowerCase().includes(currentCategory.toLowerCase()));
             }
-            if(currentSort === 'newest') {
-                filtered.sort((a, b) => b.id - a.id);
-            } else if (currentSort === 'oldest') {
-                filtered.sort((a, b) => a.id - b.id);
-            } else if (currentSort === 'price-low') {
-                filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-            } else if (currentSort === 'price-high') {
-                filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-            }
+            if(currentSort === 'newest') filtered.sort((a, b) => b.id - a.id);
+            else if (currentSort === 'oldest') filtered.sort((a, b) => a.id - b.id);
+            else if (currentSort === 'price-low') filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+            else if (currentSort === 'price-high') filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+            
             renderGrid(filtered);
         }
 
-        // --- DATA & RENDERING ---
+        // --- RENDERING ---
         function csvToJson(csv) {
             const lines = csv.split('\n');
             const result = [];
@@ -383,9 +380,16 @@
             products.forEach(p => {
                 const isLiked = localStorage.getItem('liked_item_' + p.id);
                 const activeClass = isLiked ? 'active' : '';
+                // Simluated Count
+                const fakeCount = Math.floor(p.id * 123 % 50) + 10 + (isLiked ? 1 : 0);
+
                 html += `
                     <div class="product-card" onclick="openProduct(${p.id})">
-                        <div class="card-heart ${activeClass}" id="card-heart-${p.id}" onclick="toggleLikeFromCard(event, ${p.id})"></div>
+                        <div class="card-like-badge" onclick="toggleLikeFromCard(event, ${p.id})">
+                            <div class="card-heart ${activeClass}" id="card-heart-${p.id}"></div>
+                            <span class="card-like-count" id="card-count-${p.id}">${fakeCount}</span>
+                        </div>
+                        
                         <img src="${p.image}" class="product-image" onerror="this.src='https://via.placeholder.com/300/ffc1e3/d81b60?text=Cute+Item'">
                         <div class="product-info">
                             <div class="product-title">${p.name}</div>
@@ -423,17 +427,19 @@
             window.location.hash = '';
             mainView.style.display = 'block';
             productPage.style.display = 'none';
-            // Re-render to ensure hearts are synced if liked from detail page
-            renderGrid(allProducts.filter(p => currentCategory === 'All' || p.category.includes(currentCategory))); 
+            applyFilters(); // Re-render to sync numbers
         }
+
+        // --- LIKE LOGIC (Synced) ---
+        function getFakeCount(id) { return Math.floor(id * 123 % 50) + 10; }
 
         function updateDetailLikeState(id) {
             const btn = document.getElementById('like-trigger-main');
             const counter = document.getElementById('like-counter');
-            const fakeGlobalLikes = Math.floor(id * 123 % 50) + 10;
+            const baseCount = getFakeCount(id);
             const isLiked = localStorage.getItem('liked_item_' + id);
-            if(isLiked) { btn.classList.add('active'); counter.innerText = fakeGlobalLikes + 1; } 
-            else { btn.classList.remove('active'); counter.innerText = fakeGlobalLikes; }
+            if(isLiked) { btn.classList.add('active'); counter.innerText = baseCount + 1; } 
+            else { btn.classList.remove('active'); counter.innerText = baseCount; }
         }
 
         function toggleLikeFromDetail() {
@@ -448,9 +454,19 @@
         function toggleLikeFromCard(event, id) {
             event.stopPropagation();
             const heart = document.getElementById(`card-heart-${id}`);
+            const countLabel = document.getElementById(`card-count-${id}`);
             const isLiked = heart.classList.contains('active');
-            if(isLiked) { heart.classList.remove('active'); localStorage.removeItem('liked_item_' + id); } 
-            else { heart.classList.add('active'); localStorage.setItem('liked_item_' + id, 'yes'); }
+            const baseCount = getFakeCount(id);
+
+            if(isLiked) { 
+                heart.classList.remove('active'); 
+                localStorage.removeItem('liked_item_' + id); 
+                countLabel.innerText = baseCount;
+            } else { 
+                heart.classList.add('active'); 
+                localStorage.setItem('liked_item_' + id, 'yes'); 
+                countLabel.innerText = baseCount + 1;
+            }
         }
 
         function checkHash() {
