@@ -6,261 +6,228 @@
     <title>Y2K Shop</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- Y2K STYLES --- */
+        /* --- CORE STYLES --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            background-color: #d4f1f4; /* Baby Blue */
-            font-family: 'Verdana', sans-serif;
-            padding-bottom: 90px; 
-            color: #000;
-        }
+        body { background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding-bottom: 90px; color: #111; }
 
-        /* TOP BAR */
+        /* --- TOP BAR --- */
         .top-bar {
-            position: sticky;
-            top: 0;
-            background: #ffffff;
-            padding: 15px;
-            border-bottom: 2px solid #ff69b4; /* Hot Pink */
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            z-index: 100;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            position: sticky; top: 0; background: #fff; padding: 15px;
+            border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 10px; z-index: 100;
         }
-
-        .search-container { position: relative; flex-grow: 1; }
-
         .search-input {
-            width: 100%;
-            padding: 10px 10px 10px 35px;
-            border-radius: 5px;
-            border: 2px solid #000;
-            background-color: #fff;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            font-size: 14px;
+            width: 100%; padding: 10px 10px 10px 35px; border-radius: 4px; border: 1px solid #ccc;
+            background-color: #f9f9f9; font-size: 14px;
         }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #888; }
+        .cart-btn { position: relative; font-size: 20px; color: #333; text-decoration: none; padding: 5px; }
 
-        .search-icon {
-            position: absolute; left: 10px; top: 50%;
-            transform: translateY(-50%); color: #ff69b4;
-        }
-
-        .cart-btn {
-            position: relative; font-size: 22px;
-            color: #ff69b4; text-decoration: none; padding: 5px;
-        }
-        
-        .cart-badge {
-            position: absolute; top: -5px; right: -8px;
-            background: #000; color: #fff;
-            font-size: 10px; width: 18px; height: 18px;
-            border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; border: 1px solid #fff; font-weight: bold;
-        }
-
-        /* FILTERS */
-        .filter-scroll {
-            display: flex; gap: 8px; padding: 15px;
-            overflow-x: auto; background: #d4f1f4;
-        }
-
-        .filter-pill {
-            padding: 6px 15px; border-radius: 15px;
-            background: #fff; color: #000;
-            font-family: 'Verdana', sans-serif; font-size: 12px;
-            font-weight: bold; border: 2px solid #ff69b4;
-            cursor: pointer; box-shadow: 2px 2px 0 #000;
-            white-space: nowrap;
-        }
-
-        .filter-pill.active {
-            background: #ff69b4; color: #fff; border: 2px solid #000;
-        }
-
-        /* PRODUCT GRID */
-        .product-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 15px; padding: 0 15px;
-            min-height: 200px; /* Keeps space while loading */
-        }
-
+        /* --- PRODUCT GRID (HOME) --- */
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
         .product-card {
-            background: #fff; border: 2px solid #000;
-            border-radius: 5px; overflow: hidden;
-            box-shadow: 4px 4px 0 #ff69b4; transition: transform 0.1s;
+            background: #fff; border-radius: 4px; overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer;
         }
+        .product-image { width: 100%; height: 200px; object-fit: cover; background: #eee; }
+        .product-info { padding: 10px; }
+        .brand { font-size: 11px; color: #666; margin-bottom: 2px; }
+        .price { font-weight: bold; color: #111; font-size: 15px; }
 
-        .product-card:active {
-            transform: translate(2px, 2px); box-shadow: 2px 2px 0 #ff69b4;
-        }
-
-        .product-image {
-            width: 100%; height: 180px; object-fit: cover;
-            border-bottom: 2px solid #000; background: #eee;
-        }
-
-        .product-info { padding: 10px; text-align: center; }
-
-        .brand { 
-            font-size: 11px; text-transform: uppercase; 
-            letter-spacing: 1px; color: #666; margin-bottom: 5px;
+        /* --- NEW: VINTED-STYLE PRODUCT PAGE --- */
+        #product-page {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 500; overflow-y: auto; padding-bottom: 100px;
         }
         
-        .price { 
-            font-family: 'Courier New', monospace;
-            font-weight: 900; color: #000; font-size: 16px;
+        /* The Header (Back Arrow + Share) */
+        .app-header {
+            position: absolute; top: 0; width: 100%; padding: 15px;
+            display: flex; justify-content: space-between; z-index: 10;
+        }
+        .icon-btn { 
+            background: rgba(0,0,0,0.3); color: white; border-radius: 50%; 
+            width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+            text-decoration: none; backdrop-filter: blur(4px);
         }
 
-        .buy-btn {
-            display: block; width: 100%; margin-top: 8px;
-            padding: 6px; background: #7fff00; /* Lime Green */
-            color: #000; font-weight: bold; text-transform: uppercase;
-            border: 2px solid #000; cursor: pointer;
+        /* Image Area container */
+        .image-container { position: relative; width: 100%; height: 400px; background: #000; }
+        
+        .carousel {
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+            width: 100%; height: 100%;
+        }
+        .carousel img {
+            min-width: 100%; height: 100%; object-fit: cover; scroll-snap-align: center;
         }
 
-        /* BOTTOM NAV */
+        /* THE GLOSSY HEART (Overlay) */
+        .floating-heart {
+            position: absolute; bottom: 15px; right: 15px;
+            width: 45px; height: 45px;
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            filter: grayscale(100%); opacity: 0.8; transition: all 0.2s;
+            cursor: pointer;
+        }
+        .floating-heart.active {
+            filter: grayscale(0%); opacity: 1; transform: scale(1.1);
+        }
+
+        /* Detail Section */
+        .detail-section { padding: 15px; border-bottom: 1px solid #eee; }
+        .detail-title { font-size: 18px; color: #333; margin-bottom: 5px; }
+        .detail-meta { font-size: 14px; color: #666; margin-bottom: 10px; }
+        .detail-price { font-size: 22px; font-weight: bold; color: #111; }
+        
+        .buyer-protection {
+            font-size: 13px; color: #00aeb6; /* Teal color from screenshot */
+            display: flex; align-items: center; gap: 5px; margin-top: 5px;
+        }
+
+        /* BOTTOM ACTION BAR (Split Buttons) */
+        .action-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 15px;
+            background: #fff; border-top: 1px solid #ddd; 
+            display: flex; gap: 10px; z-index: 600;
+        }
+        
+        .btn-offer {
+            flex: 1; padding: 12px; border: 1px solid #00aeb6; background: #fff;
+            color: #00aeb6; font-weight: bold; border-radius: 4px; cursor: pointer;
+        }
+        .btn-buy {
+            flex: 1; padding: 12px; border: none; background: #00aeb6;
+            color: #fff; font-weight: bold; border-radius: 4px; cursor: pointer;
+        }
+
+        /* Bottom Nav (Main Page) */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: #fff; border-top: 3px solid #000;
-            display: flex; justify-content: space-between;
-            align-items: center; padding: 10px 15px;
-            height: 75px; z-index: 200;
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #eee;
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; height: 70px;
         }
+        .nav-btn { color: #999; text-decoration: none; text-align: center; font-size: 10px; }
+        .nav-btn i { font-size: 20px; display: block; margin-bottom: 4px; }
         
-        .nav-btn {
-            display: flex; flex-direction: column; align-items: center;
-            text-decoration: none; color: #999; font-size: 10px;
-            font-weight: bold; width: 70px; text-align: center;
-        }
-        
-        .nav-btn i {
-            font-size: 22px; margin-bottom: 5px;
-            -webkit-text-stroke: 1px transparent; 
-        }
-
-        .nav-center { color: #ff69b4 !important; } 
-        .nav-right { color: #000 !important; }
-        .nav-home { color: #000 !important; }
-
-        /* Pop-out Center Button */
-        .nav-center i {
-            background: #ffe4e1; padding: 8px;
-            border-radius: 50%; border: 2px solid #ff69b4;
-            margin-top: -4px; /* Lowered as requested */
-            background: #fff; position: relative; z-index: 201;
-        }
-        
-        /* Loading Message */
-        .loading-text {
-            grid-column: span 2; text-align: center;
-            padding: 40px; color: #666;
-        }
     </style>
 </head>
 <body>
 
-    <nav class="top-bar">
-        <div class="search-container">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" class="search-input" placeholder="Search...">
-        </div>
-        <a href="#" class="cart-btn">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-badge">0</span>
-        </a>
-    </nav>
+    <div id="main-view">
+        <nav class="top-bar">
+            <div style="position:relative; flex-grow:1;">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search items...">
+            </div>
+        </nav>
 
-    <div class="filter-scroll">
-        <button class="filter-pill active">ALL</button>
-        <button class="filter-pill">Y2K</button>
-        <button class="filter-pill">VINTAGE</button>
-        <button class="filter-pill">DENIM</button>
-        <button class="filter-pill">ACCESSORIES</button>
+        <main class="product-grid" id="shop-container">
+            <div style="padding:20px; grid-column:span 2; text-align:center;">Loading Shop...</div>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="#" class="nav-btn"><i class="fas fa-home"></i>Home</a>
+            <a href="#" class="nav-btn"><i class="fas fa-search"></i>Search</a>
+            <a href="#" class="nav-btn"><i class="fas fa-plus-circle"></i>Sell</a>
+            <a href="#" class="nav-btn"><i class="fas fa-envelope"></i>Inbox</a>
+            <a href="#" class="nav-btn"><i class="fas fa-user"></i>Profile</a>
+        </nav>
     </div>
 
-    <main class="product-grid" id="shop-container">
-        <div class="loading-text">Loading items...</div>
-    </main>
+    <div id="product-page">
+        
+        <div class="app-header">
+            <a href="#" onclick="closeProduct()" class="icon-btn"><i class="fas fa-arrow-left"></i></a>
+            <a href="#" onclick="shareProduct()" class="icon-btn"><i class="fas fa-ellipsis-h"></i></a>
+        </div>
 
-    <nav class="bottom-nav">
-        <a href="#" class="nav-btn nav-home"><i class="fas fa-home"></i>Home</a>
-        <a href="#" class="nav-btn nav-center"><i class="fas fa-star"></i>Events</a>
-        <a href="#" class="nav-btn nav-right"><i class="fas fa-tag"></i>Sell</a>
-        <a href="#" class="nav-btn nav-right"><i class="fas fa-user-astronaut"></i>My Orders</a>
-    </nav>
+        <div class="image-container">
+            <div class="carousel" id="detail-images">
+                </div>
+            <div class="floating-heart" id="like-trigger" onclick="toggleLike()"></div>
+        </div>
+
+        <div class="detail-section">
+            <div class="detail-title" id="detail-name">Product Name</div>
+            <div class="detail-meta" id="detail-meta">Size M • Brand • Very Good</div>
+            
+            <div class="detail-price" id="detail-price">$0.00</div>
+            <div class="buyer-protection">
+                <i class="fas fa-shield-alt"></i> $6.39 Includes Buyer Protection
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <p style="font-size:14px; line-height:1.5; color:#333;" id="detail-desc">Description...</p>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn-offer">Make an offer</button>
+            <button class="btn-buy" onclick="alert('Opening checkout...')">Buy now</button>
+        </div>
+    </div>
 
     <script>
         // ==========================================
-        // CONFIGURATION: PASTE YOUR LINK BELOW
+        // 1. CONFIGURATION
         // ==========================================
         const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxSaXfeWcwBFpXFfbJ4lU25jKhR4ORNTbtQphKOUK7YL4JewJ2NzsS6UNf0V89UnzTufpcreBCJUJo/pub?output=csv";
-        // Example: "https://docs.google.com/spreadsheets/d/e/2PACX.../pub?output=csv"
+        
+        // PASTE THE LINK TO YOUR GLOSSY HEART IMAGE HERE:
+        const heartImageUrl = "Https://i.imgur.com/bVHkcE7_d.webp?maxwidth=760&fidelity=grand"; 
 
+        // ==========================================
+        
+        let allProducts = [];
         const container = document.getElementById('shop-container');
+        const mainView = document.getElementById('main-view');
+        const productPage = document.getElementById('product-page');
 
-        // 1. Fetch Data
+        // Apply Heart Image to CSS
+        document.getElementById('like-trigger').style.backgroundImage = `url('${heartImageUrl}')`;
+
         async function loadProducts() {
-            if(sheetUrl.includes("PASTE_YOUR")) {
-                // If user hasn't pasted a link yet, show dummy data
-                renderDummyData();
-                return;
-            }
-
+            if(sheetUrl.includes("PASTE_YOUR")) { renderDummyData(); return; }
             try {
                 const response = await fetch(sheetUrl);
                 const data = await response.text();
-                const products = csvToJson(data);
-                renderProducts(products);
-            } catch (error) {
-                console.error("Error loading products:", error);
-                container.innerHTML = '<div class="loading-text">Error loading shop. Check console.</div>';
-            }
+                allProducts = csvToJson(data);
+                renderGrid(allProducts);
+                checkHash();
+            } catch (error) { console.error(error); }
         }
 
-        // 2. Convert CSV to Code
         function csvToJson(csv) {
             const lines = csv.split('\n');
             const result = [];
-            // Skip header row (i=1)
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i]) continue;
-                // Splitting by comma (NOTE: Don't use commas IN your product names!)
-                const currentline = lines[i].split(',');
+                const row = lines[i].split(','); 
+                if(row.length < 2) continue;
                 
-                // Safe checks to prevent crashes if a row is empty
-                if(currentline.length < 2) continue;
-
-                const obj = {
-                    name: currentline[0] || "Unknown Item",
-                    price: currentline[1] || "0.00",
-                    brand: currentline[2] || "Brand",
-                    image: currentline[3] || "", // If empty, will use placeholder
-                    category: currentline[4] || "Misc"
-                };
-                result.push(obj);
+                result.push({
+                    id: i,
+                    name: row[0] || "Item",
+                    price: (row[1] || "0").replace('$', '').trim(),
+                    brand: row[2] || "Brand",
+                    image: row[3] || "", 
+                    category: row[4] || "Misc",
+                    description: row[5] || "No description.",
+                    moreImages: row[6] ? row[6].split(';') : [] 
+                });
             }
             return result;
         }
 
-        // 3. Draw the HTML
-        function renderProducts(products) {
+        function renderGrid(products) {
             let html = '';
-            products.forEach((product, index) => {
-                const cleanPrice = product.price.replace('$', '').trim();
-                
+            products.forEach(p => {
                 html += `
-                    <div class="product-card">
-                        <img src="${product.image}" class="product-image" 
-                             onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                    <div class="product-card" onclick="openProduct(${p.id})">
+                        <img src="${p.image}" class="product-image" onerror="this.src='https://via.placeholder.com/300'">
                         <div class="product-info">
-                            <div class="brand">${product.brand}</div>
-                            <div class="product-title" style="font-weight:bold; font-size:13px; margin-bottom:5px;">${product.name}</div>
-                            <div class="price">$${cleanPrice}</div>
-                            <button class="buy-btn" onclick="alert('Added ${product.name} to cart!')">Add</button>
+                            <div class="product-title" style="font-size:13px;">${p.name}</div>
+                            <div class="brand">${p.brand}</div>
+                            <div class="price">$${p.price}</div>
                         </div>
                     </div>
                 `;
@@ -268,16 +235,75 @@
             container.innerHTML = html;
         }
 
-        // 4. Fallback Dummy Data (So it looks good before you add your sheet)
-        function renderDummyData() {
-            const dummies = [
-                { name: "Setup Required", price: "0.00", brand: "System", image: "https://via.placeholder.com/300/ffb7b2/000?text=Link+Sheet", category: "Info" },
-                { name: "Pink Skirt", price: "45.00", brand: "Juicy", image: "https://via.placeholder.com/300/ffdac1/000?text=Demo+Item", category: "Y2K" }
-            ];
-            renderProducts(dummies);
+        function openProduct(id) {
+            const product = allProducts.find(p => p.id == id);
+            if (!product) return;
+
+            window.location.hash = `item-${id}`;
+
+            // Fill Info
+            document.getElementById('detail-name').innerText = product.name;
+            document.getElementById('detail-price').innerText = '$' + product.price;
+            document.getElementById('detail-desc').innerText = product.description;
+            document.getElementById('detail-meta').innerText = `${product.brand} • ${product.category}`;
+
+            // Fill Images
+            let imagesHtml = `<img src="${product.image}">`;
+            if (product.moreImages.length > 0) {
+                product.moreImages.forEach(img => {
+                    if(img.trim()) imagesHtml += `<img src="${img.trim()}">`;
+                });
+            }
+            document.getElementById('detail-images').innerHTML = imagesHtml;
+
+            // Check Like State
+            const isLiked = localStorage.getItem('liked_item_' + id);
+            const likeBtn = document.getElementById('like-trigger');
+            if(isLiked) likeBtn.classList.add('active');
+            else likeBtn.classList.remove('active');
+
+            mainView.style.display = 'none';
+            productPage.style.display = 'block';
+            window.scrollTo(0,0);
         }
 
-        // Start
+        function closeProduct() {
+            window.location.hash = '';
+            mainView.style.display = 'block';
+            productPage.style.display = 'none';
+        }
+
+        function toggleLike() {
+            const id = window.location.hash.replace('#item-','');
+            const btn = document.getElementById('like-trigger');
+            
+            if(btn.classList.contains('active')) {
+                btn.classList.remove('active');
+                localStorage.removeItem('liked_item_' + id);
+            } else {
+                btn.classList.add('active');
+                localStorage.setItem('liked_item_' + id, 'yes');
+            }
+        }
+
+        function checkHash() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#item-')) {
+                openProduct(hash.replace('#item-', ''));
+            } else {
+                closeProduct();
+            }
+        }
+        
+        window.onhashchange = checkHash;
+
+        function renderDummyData() {
+            const dummies = [
+                {id:1, name:"Primark Red Shorts", price:"5.42", brand:"Primark", image:"https://via.placeholder.com/300/ff0000/fff?text=Red+Shorts", description:"Super cute red lounge shorts. New with tags.", moreImages:[]}
+            ];
+            renderGrid(dummies);
+        }
+
         loadProducts();
     </script>
 </body>
